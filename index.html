@@ -214,7 +214,7 @@
         });
       
         // Load GeoJSON and store it for filtering
-        $.getJSON('/data/Final Disadvantaged Communities (DAC) 2023_20250318.geojson', function (data) {
+        $.getJSON('./data/Final Disadvantaged Communities (DAC) 2023_20250318.geojson', function (data) {
           fullData = data;
       
           pmLayer = L.geoJSON(data, {
