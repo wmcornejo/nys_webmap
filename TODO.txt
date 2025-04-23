@@ -1,0 +1,2 @@
+#TODO
+add extensions to maps (full screen, search)

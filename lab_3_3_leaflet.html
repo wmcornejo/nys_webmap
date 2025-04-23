@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        height: 100%;
+        width: 100%;
+        border: 0;
+        background-attachment: fixed;
+        background-size: 100% auto;
+      }
+
+      .blended_grid {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+      }
+
+      .pageHeader {
+        background-color: rgba(235, 193, 193, 0.5);
+        height: 90px;
+      }
+
+      .pageLeftMenu {
+        /*background-color: rgba(115, 73, 231, 0.5);*/
+        height: 600px;
+      }
+
+      .pageContent {
+        height: 600px;
+      }
+
+      .pageRightMenu {
+        height: 600px;
+      }
+
+      .pageFooter {
+        background-color: rgba(235, 193, 193, 0.5);
+        float: left;
+        clear: none;
+        height: 100px;
+        width: 100%;
+      }
+
+      #map {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""
+    ></script>
+  </head>
+  <body>
+    <div class="blended_grid">
+      <div
+        class="pageHeader w3-row w3-container w3-round-large w3-hide-small w3-hide-medium"
+      >
+        <div class="w3-display-container" style="height: 100%; width: auto">
+          <img
+            src="./img/Hunter.jpg"
+            class="w3-circle"
+            alt="Hunter"
+            height="100%"
+            width="auto"
+          />
+          <div class="w3-display-middle w3-container">
+            <h1
+              class="w3-text-orange"
+              style="
+                text-shadow: 1px 0 0 #00F, 0 -1px 0 #00F, 0 1px 0 #00F,
+                  -1px 0 0 #00F, 3px 3px 0 #00F;
+                font-family: Helvetica, Arial;
+              "
+            >
+              <b>MS in GeoInformatics Program</b>
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div class="w3-row">
+        <div class="pageLeftMenu w3-col m2 l3 w3-border w3-round-xxlarge">Left</div>
+        <div class="pageContent w3-col m8 l6 w3-round-xxlarge">
+          <div id="map" class="w3-round-xxlarge w3-border"></div>
+        </div>
+        <div class="pageRightMenu w3-col m2 l3 w3-border w3-round-xxlarge">Right</div>
+      </div>
+      <div class="pageFooter w3-row-padding w3-hide-small w3-hide-medium">
+        Footer
+      </div>
+    </div>
+
+    <script>
+      var reCRS = L.CRS.EPSG3857;
+      reCRS.wrapLng = [-180, 180];
+
+      var map = L.map("map", {
+        center: [40.768500, -73.964700],
+        zoom: 6,
+        minZoom: 0,
+        maxZoom: 19,
+        crs: reCRS
+      });
+
+      console.log(L.CRS.EPSG3857);
+
+      var baseLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+
+      var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      }).addTo(map);
+
+
+      var USstatesLayer = L.geoJSON(null, {
+        style: function (feature) {
+          return { color: "#000", fill: "#ccc" };
+        },
+      });
+
+      L.marker([40.768500, -73.964700]).addTo(map)
+        .bindPopup("Hunter College")
+        .openPopup();
+  
+      $.getJSON("./data/gz_2010_us_040_00_5m.json", function (data) {
+        // Do NOT create the GeoJSON layer here.
+        // Create it outside and then fill the data
+        USstatesLayer.addData(data);
+      });
+
+      var nycNTA = L.geoJSON(null, {
+        style: (f) => { 
+          let col = 'blue';
+          if(f.properties.boroname == "Brooklyn") col = 'red';
+          if(f.properties.boroname == "Queens") col = 'green';
+          return {weight: 1, fillColor: col, opacity: 0.3};
+         },
+         onEachFeature: (f, l) => {
+          l.bindTooltip("Tooltip:" + f.properties.ntaname + " in " + f.properties.boroname);
+
+          l.on("mouseover", (e) => {
+            e.target.setStyle({fillColor: '#ff1111', fillOpacity: 0.8, weight: 4});
+          });
+
+          l.on("mouseout", (e) => {
+            nycNTA.resetStyle(e.target);
+          });
+         }
+      }).addTo(map);
+
+      fetch("./data/2020 Neighborhood Tabulation Areas (NTAs) - Tabular_20240129.geojson").then(
+        function(response) {return response.json();}
+      ).then(function(data){
+        nycNTA.addData(data);
+      });
+
+      var baseLayers = {
+        "Esri Map": Esri_WorldImagery,
+        "OpenStreetMap": baseLayer
+      };
+
+      var vectorLayers = {
+        "States": USstatesLayer,
+        "NYC NTA": nycNTA
+      }
+    
+      L.control.layers(baseLayers, vectorLayers).addTo(map);  
+      
+    </script>
+  </body>
+</html>

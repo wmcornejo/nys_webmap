@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Basic Leaflet Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+    crossorigin=""
+  />
+
+
+  <script 
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+    crossorigin=""
+  ></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #f0f0f0;;
+      color: #333;
+    }
+    #container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+        background: linear-gradient(90deg, #005a87, #0088a9);
+        color: white;
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+    header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+    }
+    header h2{
+        margin: 0;
+        font-size: 1.rem;
+        letter-spacing: 1px;
+    }
+    #intro, #data {
+        background: white;
+        padding: 2rem 1rem;
+        max-width: 900px;
+        margin: 1rem auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        line-height: 1.7;
+        text-align: center;
+    }
+
+    .map-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 1em;
+    }
+
+    .map-box {
+      width: 70%;
+      height: 600px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding-left: 200px;
+    }
+    .map-box-1 {
+      width: 50%;
+      height: 600px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+
+    
+  </style>
+</head>
+<body>
+
+    <div id="container">
+        <div id="intro">
+          <h1>Visualizing Economic and Environmental Disparities among Disadvantaged Communities in NY: The Link between Health, Poverty and Pollution</h1>
+          <h2>Background</h2>
+          <p>Economic and environmental disparities are critical issues affecting disadvantaged communities across the US. Low-income areas often experience higher levels of pollution, inadequate access to resources, and exposure to environmental hazards, which exacerbate health issues and reduce quality of life. These overlapping vulnerabilities can create a cycle of inequity and limit the ability of marginalized communities to thrive.</p>
+    
+          <p>NYSERDA, in collaboration with the Climate Working Justice Group (CWJG) and the CLCPA, have provided a rich dataset for categorizing disadvantaged communities for 2023. Factors such as pollution exposure, historical disinvestment of land, climate vulnerabilities and socioeconomic factors provide a chance to map varying economic and environmental conditions in New York State. This project aims to visualize these disparities and empower policymakers and community members to better understand the challenges.</p>
+    
+          <p>This page displays these issues in a visually accessible web map format, highlighting the areas where economic vulnerabilities intersect with environmental risks. This will allow users to explore the relationships between these two important factors and raise awareness about environmental justice.</p>
+        </div>
+        <div id="data">
+            <h2>Data</h2>
+            <p><b>Economic Indicators:</b>  Unemployment rates, LMI Poverty Federal rate</br>
+                <b>Environmental Indicators:</b> Pollution data such as particulate matter, benzene concentrations, and industrial land use,Flooding risks and coastal flooding data, RMP sites (Risk Management Plan sites) and toxic waste facilities will be used to identify areas with industrial environmental hazards. </p>
+        </div>
+        <h2>Map 1: PM 2.5 and Benzene Concentration</h2>
+        <form id="cityFiltersForm">
+            <label>
+              Particulate Matter 2.5 (%):
+              <input type="range" id="minpm" name="minpm" min="0" max="1" step="0.05" value="0">
+              <span id="pmValue">0</span>
+            </label>
+            <br><br>
+          
+            <label>
+              Benzene Concentration (%):
+              <input type="range" id="minbenz" name="minbenz" min="0" max="1" step="0.05" value="0">
+              <span id="benzValue">0</span>
+            </label>
+          </form>
+        <div class="map-container">
+            <div id="map1" class="map-box"></div>
+        </div>
+        <div class="map-container">
+            <div id="map2" class="map-box"></div>
+        </div>
+      </div>
+      <script>
+        const pmSlider = document.getElementById("minpm");
+        const benzSlider = document.getElementById("minbenz");
+        const pmValue = document.getElementById("pmValue");
+        const benzValue = document.getElementById("benzValue");
+      
+        let pmLayer; 
+        let benzeneLayer; 
+        let fullData;      // for storing full GeoJSON for filtering
+      
+        const map1 = L.map('map1').setView([40.7128, -74.0060], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map1);
+      
+        const map2 = L.map('map2').setView([40.7128, -74.0060], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map2);
+      
+        // Popup per feature
+        function onEachpmFeature(feature, layer) {
+          const name = feature.properties.city_town;
+          const county = feature.properties.county;
+          layer.bindPopup(
+            "PM 2.5 Levels: " + (feature.properties.particulate_matter_25 * 100).toFixed(1) + "%" +
+            "<br>" +
+            "Benzene Levels: " + (feature.properties.benzene_concentration * 100).toFixed(1) + "%"
+          );
+        }
+        function getColor(pm) {
+            return pm > .75 ? '#CB1212' :
+                    pm > .50 ? '#656C2D' :
+                    pm > .25? '#76C244' :
+                            '#FFEDA0';
+            }
+        function getBenzStyle(feature) {
+            const benz = feature.properties.benzene_concentration;
+            return {
+            fillColor: benz > .75 ? "#FFFF00" :
+                        benz > .5 ? "#9933cc" :
+                        benz > .25 ? "#cc66ff" :
+                        "#e0ccff",
+            weight: 1,
+            color: "#333",
+            fillOpacity: 0.6
+            };
+        }
+        // Filtering logic
+        function filterCitiesByPmAndbenz(data, filters) {
+          return {
+            type: "FeatureCollection",
+            features: data.features.filter(feature => {
+              const pm = feature.properties.particulate_matter_25;
+              const benz = feature.properties.benzene_concentration;
+              return pm >= filters.minpm && benz >= filters.minbenz;
+            })
+          };
+        }
+      
+        // Update map when sliders move
+        function updateMapFilters() {
+          if (!fullData || !pmLayer) return;
+          
+          const cityFilters = {
+            minpm: parseFloat(pmSlider.value),
+            minbenz: parseFloat(benzSlider.value)
+          };
+      
+          const filteredData = filterCitiesByPmAndbenz(fullData, cityFilters);
+      
+          pmLayer.clearLayers();
+          pmLayer.addData(filteredData);
+          benzeneLayer.clearLayers();
+          benzeneLayer.addData(filteredData);
+          if (filteredData.features.length > 0) {
+            map1.fitBounds(pmLayer.getBounds());
+          }
+        }
+      
+        pmSlider.addEventListener("input", () => {
+          pmValue.textContent = pmSlider.value;
+          updateMapFilters();
+        });
+      
+        benzSlider.addEventListener("input", () => {
+          benzValue.textContent = benzSlider.value;
+          updateMapFilters();
+        });
+      
+        // Load GeoJSON and store it for filtering
+        $.getJSON('/data/Final Disadvantaged Communities (DAC) 2023_20250318.geojson', function (data) {
+          fullData = data;
+      
+          pmLayer = L.geoJSON(data, {
+            onEachFeature: onEachpmFeature,
+            style: feature => ({
+                fillColor: getColor(feature.properties.particulate_matter_25),
+                weight: 1,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 0.7
+            }),
+          }).bindTooltip((l) => {
+    return l.feature.properties.city_town + " County";
+  }).addTo(map1); 
+            benzeneLayer = L.geoJSON(data, {
+                style: getBenzStyle,
+                onEachFeature: onEachpmFeature
+            }).addTo(map1);
+          map1.fitBounds(pmLayer.getBounds());
+                      // Add layer toggle control
+    const overlays = {
+      "PM 2.5 Layer": pmLayer,
+      "Benzene Layer": benzeneLayer
+    };
+    L.control.layers(overlays, null).addTo(map1);
+        });
+
+      </script>
+      
+
+</body>
+</html>

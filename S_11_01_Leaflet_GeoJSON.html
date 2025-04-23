@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GeoJSON tutorial - Leaflet</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="docs/images/favicon.ico"
+    />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""
+    ></script>
+
+    <script src="https://unpkg.com/leaflet-providers@latest/leaflet-providers.js"></script>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+
+    <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css"
+      rel="stylesheet"
+    />
+
+    <script src="./js/leaflet-search.js"></script>
+    <link href="./css/leaflet-search.min.css" rel="stylesheet" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      #map {
+        width: 100%;
+        /*600px;*/
+        height: 100%;
+        /*400px;*/
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script>
+      var map = L.map("map", {
+        fullscreenControl: true,
+      }).setView([39.74739, -97], 5);
+
+      let basemapLayers = Array(4).fill(null),
+        basemapNames = [
+          "Stadia.StamenWatercolor",
+          "Esri.WorldStreetMap",
+          "OpenStreetMap.Mapnik",
+          "Esri.WorldGrayCanvas",
+        ];
+
+      basemapNames.forEach((v, i) => {
+        basemapLayers[i] = L.tileLayer.provider(v);
+      });
+
+      basemapLayers[0].addTo(map);
+
+      function onEachFeature(feature, layer) {
+        var popupContent =
+          "<p>Feature Type: " +
+          feature.geometry.type +
+          "</br> ID: " +
+          feature.properties.GEO_ID +
+          "</br> Name: " +
+          feature.properties.NAME +
+          "</p>";
+
+        if (feature.properties && feature.properties.popupContent) {
+          popupContent += feature.properties.popupContent;
+        }
+
+        layer.bindPopup(popupContent);
+
+        layer.on({
+          mouseover: function (e) {
+            e.target.setStyle({ fillColor: "#994400" });
+          },
+          mouseout: (e) => USstatesLayer.resetStyle(e.target),
+        });
+      }
+
+      var USstatesLayer = L.geoJSON(null, {
+        style: function (feature) {
+          return { color: "#000", fill: "#ccc" };
+        },
+        onEachFeature: onEachFeature,
+      });//.addTo(map);
+
+      $.getJSON("./gz_2010_us_040_00_5m.json", function (data) {
+        console.log(data);
+        console.log(data.features.length);
+
+        // Do NOT create the GeoJSON layer here.
+        // Create it outside and then fill the data
+        USstatesLayer.addData(data);
+      });
+
+      var USThematicLayerGroup = L.layerGroup();
+      var USCircles = L.layerGroup(),
+        USresized = L.layerGroup();
+
+      var USstatesLayerB = L.geoJSON(null, {
+        onEachFeature: (f, l) => {
+          var c = turf.centerOfMass(f);
+          var rVal = USstatesLayerB.myExtraData[3](f.properties.CENSUSAREA);
+
+          L.circle(
+            L.latLng(c.geometry.coordinates[1], c.geometry.coordinates[0]),
+            {
+              radius: rVal * 8500,
+              fillOpacity: 0.5,
+            }
+          )
+            .bindTooltip(f.properties.NAME)
+            .addTo(USCircles);
+
+          c = turf.transformScale(f, rVal / 20.0);
+          L.geoJSON(c, {
+            fillOpacity: 0.5,
+          }).addTo(USresized);
+
+          l.on({
+            mouseover: function (e) {
+              e.target.setStyle({ fillColor: "#111", weight: 2 });
+            },
+            mouseout: (e) => USstatesLayerB.resetStyle(e.target),
+            click: (e) => {
+              // console.log(e);
+              // e.latlng the coordiante of the clicked point
+              // e.target: the layer object for that polygon
+              // e.target.feature: the featue object in GeoJSON for that layer
+
+              // Now loop through the layer to find neighbors
+              USstatesLayerB.eachLayer((l) => {
+                console.log(Date.now());
+                if (!turf.booleanDisjoint(l.feature, e.target.feature))
+                  l.setStyle({ fillColor: "#555" });
+              });
+            },
+          });
+        },
+      }).addTo(USThematicLayerGroup);
+      USThematicLayerGroup.addTo(map); // if the layer is not added to the map, it will not be open in the beginning.
+
+      //USstatesLayerB.removeFrom(map);
+      //USThematicLayerGroup.removeFrom(map);
+
+      // This is for demonstration only. No need to load the same file twice.
+      // We can process the data when it is first loaded using $.getJson above.
+      // Or add the data to the GeoJSON layer this and remove $.getJSON
+      fetch("./gz_2010_us_040_00_5m.json")
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          var maxVal = -Infinity,
+            minVal = Infinity;
+          var allVals = [];
+
+          data.features.forEach((f, i) => {
+            if (
+              f.properties.NAME != "Alaska" &&
+              f.properties.NAME != "Hawaii"
+            ) {
+              maxVal = Math.max(maxVal, f.properties.CENSUSAREA);
+              minVal = Math.min(minVal, f.properties.CENSUSAREA);
+              allVals.push(f.properties.CENSUSAREA);
+            }
+          });
+
+          var valRange = maxVal - minVal;
+          var colIntpl = d3
+            .scaleQuantile()
+            .domain(allVals)
+            .range(d3.schemeOranges[9]);
+
+          USstatesLayerB.options.style = (f) => {
+            return {
+              fillColor: colIntpl(f.properties.CENSUSAREA),
+              color: "#fff",
+              weight: 1,
+              fillOpacity: 0.8,
+            };
+          };
+
+          USstatesLayerB.myExtraData = [
+            maxVal,
+            minVal,
+            valRange,
+            d3.scalePow().exponent(0.5).domain([0, maxVal]).range([0, 20]),
+          ];
+
+          USstatesLayerB.addData(data);
+        });
+
+      var baseLayers = {};
+      basemapNames.forEach((v, i) => {
+        baseLayers[v] = basemapLayers[i];
+      });
+
+      var overlayMaps = {
+        "States A": USstatesLayer,
+        "Circle showing sizes": USCircles,
+        "Resized": USresized,
+        "States B": USThematicLayerGroup,
+      };
+
+      var lC = L.control
+        .layers(baseLayers, overlayMaps, {
+          collapsed: false,
+          hideSingleBase: true,
+        })
+        .addTo(map)
+        .expand();
+
+      var lcDIVElem = lC.getContainer();
+      document.addEventListener("keydown", (e) => {
+        if ((e.key === "l") | (e.key === "L")) {
+          if (lcDIVElem.style.display == "") {
+            lcDIVElem.style.display = "none";
+          } else {
+            lcDIVElem.style.display = "";
+          }
+        } else if ((e.key === "s") | (e.key === "S")) {
+          USstatesLayerB.eachLayer((f) => {
+            if (f.feature.properties.STATE == "36") {
+              console.log("I find " + f.feature.properties.NAME);
+            }
+          });
+        }
+      });
+
+      // https://github.com/stefanocudini/leaflet-search
+      var searchControl = new L.Control.Search({
+        layer: USstatesLayerB,
+        propertyName: "NAME",
+        textPlaceholder:"Search the NAME field of the states layer",
+        marker: false,
+        moveToLocation: function (latlng, title, map) {
+          //map.fitBounds( latlng.layer.getBounds() );
+          var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+          map.setView(latlng, zoom); // access the zoom
+        },
+      });
+
+      searchControl
+        .on("search:locationfound", function (e) {
+          e.layer.setStyle({ fillColor: "#3f0", color: "#0f0" });
+          if (e.layer._popup) e.layer.openPopup();
+        })
+        .on("search:collapsed", function (e) {
+          USstatesLayerB.eachLayer(function (layer) {
+            //restore feature color
+            USstatesLayerB.resetStyle(layer);
+          });
+        });
+
+      map.addControl(searchControl); //inizialize search control
+
+      /*
+        https://github.com/stefanocudini/leaflet-search
+
+        Configure the OpenStreetMap nominatim
+        https://nominatim.org/release-docs/develop/api/Overview/
+        https://nominatim.org/release-docs/develop/api/Search/
+        */
+      var osmGeocoderControl = new L.Control.Search({
+        url: "https://nominatim.openstreetmap.org/search?format=json&q={s}&countrycodes=us",
+        jsonpParam: "json_callback",
+        propertyName: "display_name",
+        propertyLoc: ["lat", "lon"],
+        textPlaceholder:"Search any place name or address in USA",
+        marker: L.circleMarker([0, 0], { radius: 30 }),
+        autoCollapse: true,
+        autoType: false,
+        minLength: 2,
+        position: "topleft",
+        container: "",
+        moveToLocation: (latlng, name, map) => {
+          USstatesLayerB.eachLayer((l) => {
+            console.log(Date.now());
+            if (
+              turf.booleanPointInPolygon(
+                turf.point([latlng.lng, latlng.lat]),
+                l.feature
+              )
+            ) {
+              l.setStyle({ fillColor: "#555" });
+              return;
+            }
+          });
+
+          map.setView(latlng, 6);
+        },
+      });
+
+      map.addControl(osmGeocoderControl);
+    </script>
+  </body>
+</html>
