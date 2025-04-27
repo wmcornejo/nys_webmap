@@ -1,9 +1,34 @@
 #TODO
-add extensions to maps (full screen, search)
-change line border width of map
 
-questions:
-benzene levels: measured how? and where in the water or land?
+What is the purpose of your web page? what do you want to convey?
+i want to focus on public health, and how it intersects with environmental
+situations
+how traffic impacts the air we breathe and leads to diseases across the state
+
+find most vulnerable communities and tie it with something else as a bubblemap
+
+should all maps have the filtering thing?
+
+factors i like:
+low vegetative color
+pm2.5
+benzene - caused by industrial activities
+drive time to healthcare
+projected heat days
+
+map ideas:
+heart attack + drive time to healthcare
+
+traffic_truck_highways/traffic_number_vehicles -> pm2.5, benzene -> asthma, cocpd
+    for this idea, have it all be in one map, with three types of data toggable(?)
+flooding -> contamination -> health risks
+
+add extensions to maps (search)
+
+
+
+questions/tasks:
 what is the best coloring scheme for the map 1 chloropleths?
 add search to map1
-add full screen to all maps
+change basemaps for each scenario
+Draw how your web page will look like, find inspiration

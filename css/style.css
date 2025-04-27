@@ -1,0 +1,84 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #f0f0f0;;
+  color: #333;
+}
+#container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+header {
+    background: linear-gradient(90deg, #005a87, #0088a9);
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+}
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+h2{
+    margin: 0;
+    font-size: 12;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: #333;
+    align-items: center;
+}
+
+form#cityFiltersForm {
+    text-align: center;
+    background: white;
+    max-width: 800px;
+    margin: 0 auto 1.5rem auto;
+    padding: 1.0rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+}
+form label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 1rem;
+    color: #444;
+  }
+  
+  form input[type="range"] {
+    width: 60%;
+    margin-top: 0.5rem;
+}
+
+#intro, #data {
+    background: white;
+    padding: 2rem 1rem;
+    max-width: 900px;
+    margin: 1rem auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    line-height: 1.7;
+    text-align: center;
+}
+
+.map-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 1em;
+}
+
+.map-box {
+  width: 70%;
+  height: 600px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding-left: 200px;
+}
+.map-box-1 {
+  width: 50%;
+  height: 600px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+}
