@@ -144,7 +144,7 @@
         }).addTo(map2);
       
         // Popup per feature
-        function onEachpmFeature(feature, layer) {
+        function onEachFeature(feature, layer) {
           const name = feature.properties.city_town;
           const county = feature.properties.county;
           layer.bindPopup(
@@ -152,6 +152,19 @@
             "<br>" +
             "Benzene Levels: " + (feature.properties.benzene_concentration * 100).toFixed(1) + "%"
           );
+          //hover color change
+          layer.on("mouseover", (e) => {
+            e.target.setStyle({
+              fillColor: '#fffff',
+              color: '#333',
+              fillOpacity: 0.2,
+              weight: 0.5
+            });
+          });
+          layer.on("mouseout", (e) => {
+            benzeneLayer.resetStyle(e.target);
+            pmLayer.setStyle(getPmStyle);
+          });
         }
         function getColor(pm) {
             return pm > .75 ? '#CB1212' :
@@ -166,7 +179,19 @@
                         benz > .5 ? "#9933cc" :
                         benz > .25 ? "#cc66ff" :
                         "#e0ccff",
-            weight: 1,
+            weight: 0.25,
+            color: "#333",
+            fillOpacity: 0.6
+            };
+        }
+        function getPmStyle(feature) {
+            const pm = feature.properties.particulate_matter_25
+            return {
+            fillColor: pm > .75 ? '#CB1212' :
+                        pm > .5 ? '#656C2D' :
+                        pm > .25 ? '#76C244' :
+                        '#FFEDA0',
+            weight: 0.25,
             color: "#333",
             fillOpacity: 0.6
             };
@@ -217,21 +242,17 @@
           fullData = data;
       
           pmLayer = L.geoJSON(data, {
-            onEachFeature: onEachpmFeature,
-            style: feature => ({
-                fillColor: getColor(feature.properties.particulate_matter_25),
-                weight: 1,
-                opacity: 1,
-                color: 'white',
-                fillOpacity: 0.7
-            }),
+            onEachFeature: onEachFeature,
+            style: getPmStyle,
           }).bindTooltip((l) => {
     return l.feature.properties.city_town + " County";
   }).addTo(map1); 
             benzeneLayer = L.geoJSON(data, {
                 style: getBenzStyle,
-                onEachFeature: onEachpmFeature
-            }).addTo(map1);
+                onEachFeature: onEachFeature
+            }).bindTooltip((l) => {
+    return l.feature.properties.city_town + " County";
+  }).addTo(map1);
           map1.fitBounds(pmLayer.getBounds());
                       // Add layer toggle control
     const overlays = {

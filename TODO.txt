@@ -1,2 +1,9 @@
 #TODO
 add extensions to maps (full screen, search)
+change line border width of map
+
+questions:
+benzene levels: measured how? and where in the water or land?
+what is the best coloring scheme for the map 1 chloropleths?
+add search to map1
+add full screen to all maps
