@@ -7,7 +7,7 @@ how traffic impacts the air we breathe and leads to diseases across the state
 
 find most vulnerable communities and tie it with something else as a bubblemap
 
-should all maps have the filtering thing?
+
 
 factors i like:
 low vegetative color
@@ -30,5 +30,7 @@ add extensions to maps (search)
 questions/tasks:
 what is the best coloring scheme for the map 1 chloropleths?
 add search to map1
-change basemaps for each scenario
 Draw how your web page will look like, find inspiration
+look at suncodeearth
+forget about layer button, let other buttons control which show and let user decide
+no hover. just when you click theres stats 

@@ -1,45 +1,87 @@
+
 html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background: #f0f0f0;;
-  color: #333;
-}
-#container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-header {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0;
+    color: #333;
+    overflow: hidden;
+  }
+  
+
+  #container {
+    display: flex;
+    flex-direction: row; 
+    height: 100vh;
+  }
+  
+
+  #sidebar {
+    flex: 1;
+    background: #ffffff;
+    padding: 2rem 1rem;
+    overflow-y: auto;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    scroll-behavior: smooth;
+  }
+  
+
+  #maparea {
+    flex: 2;
+    height: 100vh;
+  }
+  
+  #map1 {
+    width: 100%;
+    height: 100%;
+  }
+  
+
+  header {
     background: linear-gradient(90deg, #005a87, #0088a9);
     color: white;
     padding: 2rem 1rem;
     text-align: center;
-}
-header h1 {
+  }
+  
+  header h1 {
     margin: 0;
     font-size: 1.8rem;
     letter-spacing: 1px;
-}
-h2{
-    margin: 0;
-    font-size: 12;
-    letter-spacing: 0.05em;
+  }
+  
+  
+  h2 {
+    margin: 1.5rem 0 1rem 0;
+    font-size: 1.5rem;
     font-weight: 600;
     color: #333;
-    align-items: center;
-}
-
-form#cityFiltersForm {
     text-align: center;
+  }
+  
+
+  #intro, #data {
     background: white;
-    max-width: 800px;
-    margin: 0 auto 1.5rem auto;
-    padding: 1.0rem;
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    line-height: 1.7;
+    text-align: center;
+  }
+  
+
+  form#cityFiltersForm {
+    background: white;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-}
-form label {
+    text-align: center;
+  }
+  
+  form label {
     font-weight: 500;
     display: block;
     margin-bottom: 1rem;
@@ -47,38 +89,18 @@ form label {
   }
   
   form input[type="range"] {
-    width: 60%;
+    width: 80%;
     margin-top: 0.5rem;
-}
+  }
+  
 
-#intro, #data {
-    background: white;
-    padding: 2rem 1rem;
-    max-width: 900px;
-    margin: 1rem auto;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    line-height: 1.7;
-    text-align: center;
-}
-
-.map-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 1em;
-}
-
-.map-box {
-  width: 70%;
-  height: 600px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  padding-left: 200px;
-}
-.map-box-1 {
-  width: 50%;
-  height: 600px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-}
+  @media (max-width: 768px) {
+    #container {
+      flex-direction: column;
+    }
+  
+    #maparea {
+      height: 100%; 
+    }
+  }
+  

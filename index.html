@@ -30,44 +30,42 @@
 
 </head>
 <body>
-
-    <div id="container">
-        <div id="intro">
-          <h1>Visualizing Economic and Environmental Disparities among Disadvantaged Communities in NY: The Link between Health, Poverty and Pollution</h1>
-          <h2>Background</h2>
-          <p>Economic and environmental disparities are critical issues affecting disadvantaged communities across the US. Low-income areas often experience higher levels of pollution, inadequate access to resources, and exposure to environmental hazards, which exacerbate health issues and reduce quality of life. These overlapping vulnerabilities can create a cycle of inequity and limit the ability of marginalized communities to thrive.</p>
-    
-          <p>NYSERDA, in collaboration with the Climate Working Justice Group (CWJG) and the CLCPA, have provided a rich dataset for categorizing disadvantaged communities for 2023. Factors such as pollution exposure, historical disinvestment of land, climate vulnerabilities and socioeconomic factors provide a chance to map varying economic and environmental conditions in New York State. This project aims to visualize these disparities and empower policymakers and community members to better understand the challenges.</p>
-    
-          <p>This page displays these issues in a visually accessible web map format, highlighting the areas where economic vulnerabilities intersect with environmental risks. This will allow users to explore the relationships between these two important factors and raise awareness about environmental justice.</p>
-        </div>
-        <div id="data">
-            <h2>Data</h2>
-            <p><b>Economic Indicators:</b>  Unemployment rates, LMI Poverty Federal rate</br>
-                <b>Environmental Indicators:</b> Pollution data such as particulate matter, benzene concentrations, and industrial land use,Flooding risks and coastal flooding data, RMP sites (Risk Management Plan sites) and toxic waste facilities will be used to identify areas with industrial environmental hazards. </p>
-        </div>
-        <h2>Map 1: Benzene and Particulate 2.5 Matter Concentration</h2>
-        <form id="cityFiltersForm">
-            <label>
-              Benzene Concentration (%):
-              <input type="range" id="minbenz" name="minbenz" min="0" max="1" step="0.05" value="0">
-              <span id="benzValue">0</span>
-            </label>
-            <br><br>
-            <label>
-              Particulate Matter 2.5 (%):
-              <input type="range" id="minpm" name="minpm" min="0" max="1" step="0.05" value="0">
-              <span id="pmValue">0</span>
-            </label>          
-
-          </form>
-        <div class="map-container">
-            <div id="map1" class="map-box"></div>
-        </div>
-        <div class="map-container">
-            <div id="map2" class="map-box"></div>
-        </div>
+  <div id="container">
+    <div id="maparea">
+      <div id="map1" class="map-box"></div>
+    </div>
+    <div id="sidebar">
+      <div id="intro">
+        <h1>Impact of Highway Traffic on Air Quality and Respiratory Health</h1>
+        <p>Economic and environmental disparities are critical issues affecting disadvantaged communities across the US. Low-income areas often experience higher levels of pollution, inadequate access to resources, and exposure to environmental hazards, which exacerbate health issues and reduce quality of life. These overlapping vulnerabilities can create a cycle of inequity and limit the ability of marginalized communities to thrive.</p>
+  
+        <p>NYSERDA, in collaboration with the Climate Working Justice Group (CWJG) and the CLCPA, have provided a rich dataset for categorizing disadvantaged communities for 2023. Factors such as pollution exposure, historical disinvestment of land, climate vulnerabilities and socioeconomic factors provide a chance to map varying economic and environmental conditions in New York State. This project aims to visualize these disparities and empower policymakers and community members to better understand the challenges.</p>
+  
+        <p>This page displays these issues in a visually accessible web map format, highlighting the areas where economic vulnerabilities intersect with environmental risks. This will allow users to explore the relationships between these two important factors and raise awareness about environmental justice.</p>
       </div>
 
+      <div id="data">
+        <h2>Data</h2>
+        <p><b>Economic Indicators:</b> ...<br>
+        <b>Environmental Indicators:</b> ...</p>
+      </div>
+
+      <h2>Map 1: Benzene and Particulate 2.5 Matter Concentration</h2>
+
+      <form id="cityFiltersForm">
+        <label>
+          Benzene Concentration (%):
+          <input type="range" id="minbenz" name="minbenz" min="0" max="1" step="0.05" value="0">
+          <span id="benzValue">0</span>
+        </label>
+        <br><br>
+        <label>
+          Particulate Matter 2.5 (%):
+          <input type="range" id="minpm" name="minpm" min="0" max="1" step="0.05" value="0">
+          <span id="pmValue">0</span>
+        </label>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
