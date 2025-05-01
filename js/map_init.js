@@ -25,20 +25,19 @@ var cartodb_positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/
 
 // Popup per feature
 function onEachFeature(feature, layer) {
-  layer.bindPopup(
-    "PM 2.5 Levels: " + (feature.properties.particulate_matter_25 * 100).toFixed(1) + "%" +
-    "<br>" +
-    "Benzene Levels: " + (feature.properties.benzene_concentration * 100).toFixed(1) + "%"+
-    "<br>" + "------------------------------" + "<br>" +
-    "Traffic Truck Highway Levels: " + (feature.properties.traffic_truck_highways * 100).toFixed(1) + "%" +
-    "<br>" +
-    "Traffic Number Vehicles Levels: " + (feature.properties.traffic_number_vehicles * 100).toFixed(1) + "%" +
-    "<br>" + "------------------------------" + "<br>" +
-    "Asthma ED Rate Levels: " + (feature.properties.asthma_ed_rate* 100).toFixed(1) + "%"+
-    "<br>" +
-    "COCPD ED Rate Levels: " + (feature.properties.copd_ed_rate * 100).toFixed(1) + "%"
+    const props = feature.properties;
 
-  );
+    layer.bindPopup(`
+      <table class="popup-table">
+        <tr><th colspan="2"><b>${props.city_town}</b></th></tr>
+        <tr><th>PM 2.5</th><td class="${getLevelColorClass(props.particulate_matter_25)}">${(props.particulate_matter_25 * 100).toFixed(1)}%</td></tr>
+        <tr><th>Benzene</th><td class="${getLevelColorClass(props.benzene_concentration)}">${(props.benzene_concentration * 100).toFixed(1)}%</td></tr>
+        <tr><th>Truck Traffic</th><td class="${getLevelColorClass(props.traffic_truck_highways)}">${(props.traffic_truck_highways * 100).toFixed(1)}%</td></tr>
+        <tr><th>Vehicle Count</th><td class="${getLevelColorClass(props.traffic_number_vehicles)}">${(props.traffic_number_vehicles * 100).toFixed(1)}%</td></tr>
+        <tr><th>Asthma ED Rate</th><td class="${getLevelColorClass(props.asthma_ed_rate)}">${(props.asthma_ed_rate * 100).toFixed(1)}%</td></tr>
+        <tr><th>COPD ED Rate</th><td class="${getLevelColorClass(props.copd_ed_rate)}">${(props.copd_ed_rate * 100).toFixed(1)}%</td></tr>
+      </table>
+    `);
   //hover color change
   layer.on("mouseover", (e) => {
     e.target.setStyle({
@@ -47,6 +46,7 @@ function onEachFeature(feature, layer) {
       fillOpacity: 0.2,
       weight: 0.5
     });
+    e.target.bringToFront();
   });
   layer.on("mouseout", (e) => {
     benzeneLayer.resetStyle(e.target);
@@ -111,22 +111,23 @@ function getPmStyle(feature) {
 function getasthma(feature) {
     const pm = feature.properties.asthma_ed_rate
     return {
-    fillColor: pm > .75 ? '#ffffcc' :
-                pm > .5 ? '#c2e699' :
-                pm > .25 ? '#78c679' :
-                '#238443',
+    fillColor: pm > .75 ? '#238443' :
+                pm > .5 ? '#78c679' :
+                pm > .25 ? '#c2e699' :
+                '#ffffcc',
     weight: 0.15,
     color: "#333",
     fillOpacity: 0.9
     };
 }
+
 function getcocpd(feature) {
     const pm = feature.properties.copd_ed_rate
     return {
-    fillColor: pm > .75 ? '#feebe2' :
-                pm > .5 ? '#fbb4b9' :
-                pm > .25 ? '#f768a1' :
-                '#ae017e',
+    fillColor: pm > .75 ? '#ae017e' :
+                pm > .5 ? '#f768a1' :
+                pm > .25 ? '#fbb4b9' :
+                '#feebe2',
     weight: 0.15,
     color: "#333",
     fillOpacity: 0.9
@@ -143,7 +144,13 @@ function filterCitiesByPmAndbenz(data, filters) {
     })
   };
 }
-
+// for popup
+function getLevelColorClass(value) {
+    if (value < 0.25) return "popup-green";
+    else if (value < 0.5) return "popup-lightgreen";
+    else if (value < 0.75) return "popup-yellow";
+    else return "popup-red";
+  }
 // Update map when sliders move
 function updateMapFilters() {
   if (!fullData || !pmLayer) return;
@@ -225,9 +232,59 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
         "Traffic Truck Highway Layer": trafficTruckHighwaysLayer,
         "Traffic Number Vehicles Layer": traffic_number_vehiclesLayer,
         "Asthma ED Rate Layer": asthma_edLayer,
-        "COPD ED Rate Layer": cocpd_edLayer
+        "COCPD ED Rate Layer": cocpd_edLayer
     };
+    const searchbox = L.control.searchbox({
+        placeholder: 'Search for a city/town...',
+        position: 'topright',
+        expand: 'left'
+    }).addTo(map1);
     L.control.layers(overlays, null).addTo(map1);
+
+    const cities = fullData.features.map(f => f.properties.city_town);
+    const fuse = new Fuse(cities, {
+        shouldSort: true,
+        threshold: 0.4,
+        minMatchCharLength: 2
+      });
+      searchbox.onInput("keyup", function (e) {
+        if (e.keyCode === 13) {
+          search();
+        } else {
+          const value = searchbox.getValue();
+          if (value !== "") {
+            const results = fuse.search(value);
+            searchbox.setItems(results.map(res => res.item).slice(0, 5));
+          } else {
+            searchbox.clearItems();
+          }
+        }
+      });
+    searchbox.onButton("click", search);
+    function search() {
+        const value = searchbox.getValue();
+        if (value !== "") {
+          const match = fullData.features.find(f => 
+            f.properties.city_town.toLowerCase() === value.toLowerCase()
+          );
+      
+          if (match) {
+            const layer = L.geoJSON(match);
+            map1.fitBounds(layer.getBounds());
+            L.popup()
+              .setLatLng(layer.getBounds().getCenter())
+              .setContent(`<b>${match.properties.city_town}</b>`)
+              .openOn(map1);
+          } else {
+            alert("No exact match found.");
+          }
+        }
+      
+        setTimeout(() => {
+          searchbox.hide();
+          searchbox.clear();
+        }, 600);
+      }
 });
 
 

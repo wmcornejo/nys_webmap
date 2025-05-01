@@ -103,4 +103,32 @@ html, body {
       height: 100%; 
     }
   }
+  .popup-table {
+    font-family: sans-serif;
+    font-size: 13px;
+    border-collapse: collapse;
+  }
   
+  .popup-table td, .popup-table th {
+    padding: 4px 6px;
+    text-align: left;
+  }
+  .popup-table td {
+    padding: 3px;
+    text-align: right;
+  }
+  .popup-green {
+    color: darkgreen;
+  }
+  
+  .popup-lightgreen {
+    color: #91cf60;
+  }
+  
+  .popup-yellow {
+    color: #fec44f;
+  }
+  
+  .popup-red {
+    color: #de2d26;
+  }
