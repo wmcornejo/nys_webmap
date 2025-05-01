@@ -34,3 +34,10 @@ Draw how your web page will look like, find inspiration
 look at suncodeearth
 forget about layer button, let other buttons control which show and let user decide
 no hover. just when you click theres stats 
+
+add title to click
+what should show when hovered?
+Update the color scheme either preferably sequential or diverging  
+(using ColorBrewer - https://colorbrewer2.org/#type=diverging&scheme=BrBG&n=3). 
+Based on your data normalize it as you are aiming at choropleth instead presenting raw values, 
+also reduce the areas where you don't have a data with a more neutral transparent color and reduce the edge length or line width.

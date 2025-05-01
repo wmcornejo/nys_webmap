@@ -9,14 +9,13 @@ let benzeneLayer;
 let fullData;      // for storing full GeoJSON for filtering
 
 const map1 = L.map('map1',{fullscreenControl: true}).setView([40.7128, -74.0060], 12);
-var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
-}).addTo(map1);
-var alidade_smooth_dark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
-	minZoom: 0,
-	maxZoom: 20,
-	attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-	ext: 'png'
+//var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//  attribution: '© OpenStreetMap contributors'
+//}).addTo(map1);
+var cartodb_positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 20
 }).addTo(map1);
 
 //const map2 = L.map('map2',{fullscreenControl: true}).setView([40.7128, -74.0060], 12);
@@ -53,16 +52,21 @@ function onEachFeature(feature, layer) {
     benzeneLayer.resetStyle(e.target);
     pmLayer.setStyle(getPmStyle);
     trafficTruckHighwaysLayer.setStyle(getthwayStyle);
+    traffic_number_vehiclesLayer.setStyle(getttnv);
+    asthma_edLayer.setStyle(getasthma);
+    cocpd_edLayer.setStyle(getcocpd);
   });
 }
+
+// Style functions
 function getthwayStyle(feature) {
     const tt = feature.properties.traffic_truck_highways;
     return {
-    fillColor: tt > .75 ? '#CB1212' :
-                tt > .5 ? '#656C2D' :
-                tt > .25 ? '#76C244' :
-                '#FFEDA0',
-    weight: 0.25,
+    fillColor: tt > .75 ? '#005a32' :
+                tt > .5 ? '#238b45' :
+                tt > .25 ? '#66c2a4' :
+                '#e5f5f9',
+    weight: 0.15,
     color: "#333",
     fillOpacity: 0.9
     };
@@ -70,11 +74,11 @@ function getthwayStyle(feature) {
 function getttnv(feature) {
     const pm = feature.properties.particulate_matter_25
     return {
-    fillColor: pm > .75 ? '#CB1212' :
-                pm > .5 ? '#656C2D' :
-                pm > .25 ? '#76C244' :
-                '#FFEDA0',
-    weight: 0.25,
+    fillColor: pm > .75 ? '#005a32' :
+                pm > .5 ? '#238b45' :
+                pm > .25 ? '#66c2a4' :
+                '#e5f5f9',
+    weight: 0.15,
     color: "#333",
     fillOpacity: 0.9
     };
@@ -82,11 +86,11 @@ function getttnv(feature) {
 function getBenzStyle(feature) {
     const benz = feature.properties.benzene_concentration;
     return {
-    fillColor: benz > .75 ? "#FFFF00" :
-                benz > .5 ? "#9933cc" :
-                benz > .25 ? "#cc66ff" :
-                "#e0ccff",
-    weight: 0.25,
+    fillColor: benz > .75 ? "#cb181d" :
+                benz > .5 ? "#fb6a4a" :
+                benz > .25 ? "#fcae91" :
+                "#fee5d9",
+    weight: 0.15,
     color: "#333",
     fillOpacity: 0.9
     };
@@ -95,23 +99,35 @@ function getBenzStyle(feature) {
 function getPmStyle(feature) {
     const pm = feature.properties.particulate_matter_25
     return {
-    fillColor: pm > .75 ? '#CB1212' :
-                pm > .5 ? '#656C2D' :
-                pm > .25 ? '#76C244' :
-                '#FFEDA0',
-    weight: 0.25,
+    fillColor: pm > .75 ? '#d94701' :
+                pm > .5 ? '#fd8d3c' :
+                pm > .25 ? '#fdbe85' :
+                '#feedde',
+    weight: 0.15,
     color: "#333",
     fillOpacity: 0.9
     };
 }
-function getPmStyle(feature) {
-    const pm = feature.properties.particulate_matter_25
+function getasthma(feature) {
+    const pm = feature.properties.asthma_ed_rate
     return {
-    fillColor: pm > .75 ? '#CB1212' :
-                pm > .5 ? '#656C2D' :
-                pm > .25 ? '#76C244' :
-                '#FFEDA0',
-    weight: 0.25,
+    fillColor: pm > .75 ? '#ffffcc' :
+                pm > .5 ? '#c2e699' :
+                pm > .25 ? '#78c679' :
+                '#238443',
+    weight: 0.15,
+    color: "#333",
+    fillOpacity: 0.9
+    };
+}
+function getcocpd(feature) {
+    const pm = feature.properties.copd_ed_rate
+    return {
+    fillColor: pm > .75 ? '#feebe2' :
+                pm > .5 ? '#fbb4b9' :
+                pm > .25 ? '#f768a1' :
+                '#ae017e',
+    weight: 0.15,
     color: "#333",
     fillOpacity: 0.9
     };
@@ -158,10 +174,10 @@ benzSlider.addEventListener("input", () => {
   updateMapFilters();
 });
 
-// Load GeoJSON and store it for filtering
+// Load GeoJSON and add layers
 $.getJSON('data/fdc_2023.geojson', function (data) {
     fullData = data;
-    //pm and 2.5 layers
+    //pm and benzene layers
     pmLayer = L.geoJSON(data, {
         onEachFeature: onEachFeature,
         style: getPmStyle,
@@ -174,9 +190,29 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
     }).bindTooltip((l) => {
         return l.feature.properties.city_town + " County";
     }).addTo(map1);
+
     //traffic_truck_highways/traffic_number_vehicles
     trafficTruckHighwaysLayer = L.geoJSON(data, {
         style: getthwayStyle,
+        onEachFeature: onEachFeature
+    }).bindTooltip((l) => {
+        return l.feature.properties.city_town + " County";
+    }).addTo(map1);
+    traffic_number_vehiclesLayer = L.geoJSON(data, {
+        style: getttnv,
+        onEachFeature: onEachFeature
+    }).bindTooltip((l) => {
+        return l.feature.properties.city_town + " County";
+    }).addTo(map1);
+    //asthma_ed_rate/copd_ed_rate
+    asthma_edLayer = L.geoJSON(data, {
+        style: getasthma,
+        onEachFeature: onEachFeature
+    }).bindTooltip((l) => {
+        return l.feature.properties.city_town + " County";
+    }).addTo(map1);
+    cocpd_edLayer = L.geoJSON(data, {
+        style: getcocpd,
         onEachFeature: onEachFeature
     }).bindTooltip((l) => {
         return l.feature.properties.city_town + " County";
@@ -186,13 +222,12 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
     const overlays = {
         "PM 2.5 Layer": pmLayer,
         "Benzene Layer": benzeneLayer,
-        "Traffic Truck Highway Layer": trafficTruckHighwaysLayer
+        "Traffic Truck Highway Layer": trafficTruckHighwaysLayer,
+        "Traffic Number Vehicles Layer": traffic_number_vehiclesLayer,
+        "Asthma ED Rate Layer": asthma_edLayer,
+        "COPD ED Rate Layer": cocpd_edLayer
     };
-    var baseLayers = {
-        "Alidade Smooth Dark": alidade_smooth_dark,
-        "OpenStreetMap": osm
-      };
-    L.control.layers(baseLayers, overlays).addTo(map1);
+    L.control.layers(overlays, null).addTo(map1);
 });
 
 
