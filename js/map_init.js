@@ -38,25 +38,21 @@ function onEachFeature(feature, layer) {
         <tr><th>COPD ED Rate</th><td class="${getLevelColorClass(props.copd_ed_rate)}">${(props.copd_ed_rate * 100).toFixed(1)}%</td></tr>
       </table>
     `);
-  //hover color change
-  layer.on("mouseover", (e) => {
-    e.target.setStyle({
-      fillColor: '#fffff',
-      color: '#333',
-      fillOpacity: 0.2,
-      weight: 0.5
-    });
-    e.target.bringToFront();
-  });
-  layer.on("mouseout", (e) => {
-    benzeneLayer.resetStyle(e.target);
-    pmLayer.setStyle(getPmStyle);
-    trafficTruckHighwaysLayer.setStyle(getthwayStyle);
-    traffic_number_vehiclesLayer.setStyle(getttnv);
-    asthma_edLayer.setStyle(getasthma);
-    cocpd_edLayer.setStyle(getcocpd);
-  });
-}
+    layer.on("mouseover", (e) => {
+        e.target.setStyle({
+          fillColor: '#ffffff',
+          color: '#333',
+          fillOpacity: 0.2,
+          weight: 0.5
+        });
+        e.target.bringToFront();
+      });
+    
+      layer.on("mouseout", (e) => {
+        dataLayer.resetStyle(e.target);
+        dataLayer.setStyle(currentStyleFn);
+      });
+    }
 
 // Style functions
 function getthwayStyle(feature) {
@@ -153,7 +149,7 @@ function getLevelColorClass(value) {
   }
 // Update map when sliders move
 function updateMapFilters() {
-  if (!fullData || !pmLayer) return;
+  if (!fullData || !dataLayer) return;
   
   const cityFilters = {
     minpm: parseFloat(pmSlider.value),
@@ -162,12 +158,10 @@ function updateMapFilters() {
 
   const filteredData = filterCitiesByPmAndbenz(fullData, cityFilters);
 
-  pmLayer.clearLayers();
-  pmLayer.addData(filteredData);
-  benzeneLayer.clearLayers();
-  benzeneLayer.addData(filteredData);
+  dataLayer.clearLayers();         
+  dataLayer.addData(filteredData);  
   if (filteredData.features.length > 0) {
-    map1.fitBounds(pmLayer.getBounds());
+    map1.fitBounds(dataLayer.getBounds());
   }
 }
 
@@ -181,65 +175,38 @@ benzSlider.addEventListener("input", () => {
   updateMapFilters();
 });
 
-// Load GeoJSON and add layers
+let dataLayer;
+let currentStyleFn = getPmStyle;
 $.getJSON('data/fdc_2023.geojson', function (data) {
-    fullData = data;
-    //pm and benzene layers
-    pmLayer = L.geoJSON(data, {
-        onEachFeature: onEachFeature,
-        style: getPmStyle,
-    }).bindTooltip((l) => {
-        return l.feature.properties.city_town + " County";
-    }).addTo(map1); 
-    benzeneLayer = L.geoJSON(data, {
-        style: getBenzStyle,
-        onEachFeature: onEachFeature
-    }).bindTooltip((l) => {
-        return l.feature.properties.city_town + " County";
-    }).addTo(map1);
+  fullData = data;
 
-    //traffic_truck_highways/traffic_number_vehicles
-    trafficTruckHighwaysLayer = L.geoJSON(data, {
-        style: getthwayStyle,
-        onEachFeature: onEachFeature
-    }).bindTooltip((l) => {
-        return l.feature.properties.city_town + " County";
-    }).addTo(map1);
-    traffic_number_vehiclesLayer = L.geoJSON(data, {
-        style: getttnv,
-        onEachFeature: onEachFeature
-    }).bindTooltip((l) => {
-        return l.feature.properties.city_town + " County";
-    }).addTo(map1);
-    //asthma_ed_rate/copd_ed_rate
-    asthma_edLayer = L.geoJSON(data, {
-        style: getasthma,
-        onEachFeature: onEachFeature
-    }).bindTooltip((l) => {
-        return l.feature.properties.city_town + " County";
-    }).addTo(map1);
-    cocpd_edLayer = L.geoJSON(data, {
-        style: getcocpd,
-        onEachFeature: onEachFeature
-    }).bindTooltip((l) => {
-        return l.feature.properties.city_town + " County";
-    }).addTo(map1);
-    map1.fitBounds(pmLayer.getBounds());
+  dataLayer = L.geoJSON(data, {
+    onEachFeature: onEachFeature,
+    style: getPmStyle // default style
+  }).addTo(map1);
 
-    const overlays = {
-        "PM 2.5 Layer": pmLayer,
-        "Benzene Layer": benzeneLayer,
-        "Traffic Truck Highway Layer": trafficTruckHighwaysLayer,
-        "Traffic Number Vehicles Layer": traffic_number_vehiclesLayer,
-        "Asthma ED Rate Layer": asthma_edLayer,
-        "COCPD ED Rate Layer": cocpd_edLayer
-    };
+  function switchStyle(styleFn) {
+    currentStyleFn = styleFn;
+    dataLayer.setStyle(styleFn);
+  }
+  document.getElementById('layerStyleSelect').addEventListener('change', (e) => {
+    const val = e.target.value;
+    if (val === 'pm') switchStyle(getPmStyle);
+    else if (val === 'benz') switchStyle(getBenzStyle);
+    else if (val === 'ttraf') switchStyle(getttnv);
+    else if (val === 'tthwy') switchStyle(getthwayStyle);
+    else if (val === 'cocpd') switchStyle(getcocpd);
+    else if (val === 'asthma') switchStyle(getasthma);
+    
+  });
+
+    map1.fitBounds(dataLayer.getBounds());
+
     const searchbox = L.control.searchbox({
-        placeholder: 'Search for a city/town...',
         position: 'topright',
         expand: 'left'
     }).addTo(map1);
-    L.control.layers(overlays, null).addTo(map1);
+
 
     const cities = fullData.features.map(f => f.properties.city_town);
     const fuse = new Fuse(cities, {
@@ -270,11 +237,10 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
       
           if (match) {
             const layer = L.geoJSON(match);
-            map1.fitBounds(layer.getBounds());
-            L.popup()
-              .setLatLng(layer.getBounds().getCenter())
-              .setContent(`<b>${match.properties.city_town}</b>`)
-              .openOn(map1);
+            map1.fitBounds(layer.getBounds(), {
+                padding: [50, 50],
+                maxZoom: 11
+              });
           } else {
             alert("No exact match found.");
           }

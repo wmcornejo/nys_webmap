@@ -30,6 +30,9 @@
   <link href="css/Leaflet.AnimatedSearchBox.css" rel="stylesheet">
   <script src="js/LeafletAnimatedSearchBox.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@5.0.10-beta/dist/fuse.min.js"></script>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
   <script src="js/map_init.js" defer></script>
 
 </head>
@@ -69,6 +72,22 @@
           <span id="pmValue">0</span>
         </label>
       </form>
+      <select id="layerStyleSelect">
+        <option value="pm">PM 2.5</option>
+        <option value="benz">Benzene</option>
+        <option value="ttraf">Truck Traffic</option>
+        <option value="tthwy">Highway Traffic</option>
+        <option value="asthma">Asthma ED Rate</option>
+        <option value="cocpd">COCPD Rate</option>
+      </select>
+      <div id="factorSelector" class="factor-selector">
+        <div class="factor-box" id="pmBox"> PM 2.5</div>
+        <div class="factor-box" id="benzBox">Benzene</div>
+        <div class="factor-box" id="ttrafBox"> Truck Traffic</div>
+        <div class="factor-box" id="tthwyBox"> Highway Traffic</div>
+        <div class="factor-box" id="asthmaBox"> Asthma ED Rate</div>
+        <div class="factor-box" id="cocpdBox"> COPD ED Rate</div>
+      </div>
     </div>
   </div>
 </body>

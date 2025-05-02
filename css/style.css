@@ -118,7 +118,7 @@ html, body {
     text-align: right;
   }
   .popup-green {
-    color: darkgreen;
+    color: limegreen;
   }
   
   .popup-lightgreen {
@@ -131,4 +131,38 @@ html, body {
   
   .popup-red {
     color: #de2d26;
+  }
+
+  #layerStyleSelect {
+    font-size: 14px;
+    padding: 4px 8px;
+
+    width: 160px;
+    background-color: white;
+  }
+  .factor-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: repeat(2, 1fr);   
+    gap: 10px;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%; 
+  }
+  
+  .factor-box {
+    background-color: #f5f5f5;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .factor-box:hover {
+    background-color: #e0e0e0;
   }
