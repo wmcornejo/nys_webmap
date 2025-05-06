@@ -44,18 +44,29 @@
     <div id="sidebar">
       <div id="intro">
         <h1>Impact of Highway Traffic on Air Quality and Respiratory Health</h1>
-        <p>Economic and environmental disparities are critical issues affecting disadvantaged communities across the US. Low-income areas often experience higher levels of pollution, inadequate access to resources, and exposure to environmental hazards, which exacerbate health issues and reduce quality of life. These overlapping vulnerabilities can create a cycle of inequity and limit the ability of marginalized communities to thrive.</p>
-  
-        <p>NYSERDA, in collaboration with the Climate Working Justice Group (CWJG) and the CLCPA, have provided a rich dataset for categorizing disadvantaged communities for 2023. Factors such as pollution exposure, historical disinvestment of land, climate vulnerabilities and socioeconomic factors provide a chance to map varying economic and environmental conditions in New York State. This project aims to visualize these disparities and empower policymakers and community members to better understand the challenges.</p>
-  
-        <p>This page displays these issues in a visually accessible web map format, highlighting the areas where economic vulnerabilities intersect with environmental risks. This will allow users to explore the relationships between these two important factors and raise awareness about environmental justice.</p>
+          <p>The relationship between highway traffic and 
+            air quality is often overlooked. However, highway traffic can significantly
+            impact air quality, leading to increased levels of pollutants such as
+            nitrogen oxides (NOx), particulate matter (PM), and volatile organic 
+            compounds (VOCs). These pollutants can have serious health effects,
+            particularly for vulnerable populations such as children, the elderly,
+            and those with pre-existing respiratory conditions. The health impacts
+            of highway traffic can be particularly pronounced in low-income and
+            minority communities, which are often located near major highways and
+            transportation corridors. These communities may be exposed to higher
+            levels of air pollution, leading to increased rates of respiratory
+            illnesses such as asthma and chronic obstructive pulmonary disease (COPD).</p>
+
+          <p>NYSERDA, in collaboration with the Climate Working Justice Group (CWJG) 
+            and the CLCPA, have provided a rich dataset for categorizing disadvantaged 
+            communities for 2023. Factors such as pollution exposure, historical 
+            disinvestment of land, climate vulnerabilities and socioeconomic factors 
+            provide a chance to map varying economic and environmental conditions in New York State. 
+            This project aims to visualize these disparities and empower policymakers 
+            and community members to better understand the challenges.</p>
+
       </div>
 
-      <div id="data">
-        <h2>Data</h2>
-        <p><b>Economic Indicators:</b> ...<br>
-        <b>Environmental Indicators:</b> ...</p>
-      </div>
 
       <h2>Benzene and Particulate 2.5 Matter Concentration</h2>
 
@@ -72,21 +83,13 @@
           <span id="pmValue">0</span>
         </label>
       </form>
-      <select id="layerStyleSelect">
-        <option value="pm">PM 2.5</option>
-        <option value="benz">Benzene</option>
-        <option value="ttraf">Truck Traffic</option>
-        <option value="tthwy">Highway Traffic</option>
-        <option value="asthma">Asthma ED Rate</option>
-        <option value="cocpd">COCPD Rate</option>
-      </select>
       <div id="factorSelector" class="factor-selector">
-        <div class="factor-box" id="pmBox"> PM 2.5</div>
-        <div class="factor-box" id="benzBox">Benzene</div>
-        <div class="factor-box" id="ttrafBox"> Truck Traffic</div>
-        <div class="factor-box" id="tthwyBox"> Highway Traffic</div>
-        <div class="factor-box" id="asthmaBox"> Asthma ED Rate</div>
-        <div class="factor-box" id="cocpdBox"> COPD ED Rate</div>
+        <div class="factor-box" data-style="pm">PM 2.5</div>
+        <div class="factor-box" data-style="benz">Benzene</div>
+        <div class="factor-box" data-style="ttraf">Truck Traffic</div>
+        <div class="factor-box" data-style="tthwy">Highway Traffic</div>
+        <div class="factor-box" data-style="asthma">Asthma ED Rate</div>
+        <div class="factor-box" data-style="cocpd">COPD ED Rate</div>
       </div>
     </div>
   </div>

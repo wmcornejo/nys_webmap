@@ -26,7 +26,6 @@ var cartodb_positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/
 // Popup per feature
 function onEachFeature(feature, layer) {
     const props = feature.properties;
-
     layer.bindPopup(`
       <table class="popup-table">
         <tr><th colspan="2"><b>${props.city_town}</b></th></tr>
@@ -38,6 +37,7 @@ function onEachFeature(feature, layer) {
         <tr><th>COPD ED Rate</th><td class="${getLevelColorClass(props.copd_ed_rate)}">${(props.copd_ed_rate * 100).toFixed(1)}%</td></tr>
       </table>
     `);
+    
     layer.on("mouseover", (e) => {
         e.target.setStyle({
           fillColor: '#ffffff',
@@ -49,10 +49,13 @@ function onEachFeature(feature, layer) {
       });
     
       layer.on("mouseout", (e) => {
-        dataLayer.resetStyle(e.target);
-        dataLayer.setStyle(currentStyleFn);
+        const layer = e.target;
+        //const newStyle = currentStyleFn(layer.feature); 
+        layer.setStyle(currentStyleFn(layer.feature));
       });
+
     }
+
 
 // Style functions
 function getthwayStyle(feature) {
@@ -160,9 +163,6 @@ function updateMapFilters() {
 
   dataLayer.clearLayers();         
   dataLayer.addData(filteredData);  
-  if (filteredData.features.length > 0) {
-    map1.fitBounds(dataLayer.getBounds());
-  }
 }
 
 pmSlider.addEventListener("input", () => {
@@ -185,20 +185,27 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
     style: getPmStyle // default style
   }).addTo(map1);
 
-  function switchStyle(styleFn) {
-    currentStyleFn = styleFn;
-    dataLayer.setStyle(styleFn);
-  }
-  document.getElementById('layerStyleSelect').addEventListener('change', (e) => {
-    const val = e.target.value;
-    if (val === 'pm') switchStyle(getPmStyle);
-    else if (val === 'benz') switchStyle(getBenzStyle);
-    else if (val === 'ttraf') switchStyle(getttnv);
-    else if (val === 'tthwy') switchStyle(getthwayStyle);
-    else if (val === 'cocpd') switchStyle(getcocpd);
-    else if (val === 'asthma') switchStyle(getasthma);
-    
+ 
+  const styleMap = {
+    pm: getPmStyle,
+    benz: getBenzStyle,
+    ttraf: getthwayStyle,
+    tthwy: getttnv,
+    asthma: getasthma,
+    cocpd: getcocpd,
+  };
+  
+  document.querySelectorAll('.factor-box').forEach(box => {
+    box.addEventListener('click', () => {
+      const styleKey = box.dataset.style;
+      const styleFn = styleMap[styleKey];
+      if (styleFn) {
+        currentStyleFn = styleFn;
+        dataLayer.setStyle(styleFn);
+      }
+    });
   });
+
 
     map1.fitBounds(dataLayer.getBounds());
 
@@ -209,7 +216,8 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
 
 
     const cities = fullData.features.map(f => f.properties.city_town);
-    const fuse = new Fuse(cities, {
+    const counties = fullData.features.map(f => f.properties.county);
+    const fuse = new Fuse(counties, {
         shouldSort: true,
         threshold: 0.4,
         minMatchCharLength: 2
@@ -232,7 +240,7 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
         const value = searchbox.getValue();
         if (value !== "") {
           const match = fullData.features.find(f => 
-            f.properties.city_town.toLowerCase() === value.toLowerCase()
+            f.properties.county.toLowerCase() === value.toLowerCase()
           );
       
           if (match) {
