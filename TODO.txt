@@ -42,3 +42,5 @@ Update the color scheme either preferably sequential or diverging
 Based on your data normalize it as you are aiming at choropleth instead presenting raw values, 
 also reduce the areas where you don't have a data with a more neutral transparent color and reduce the edge length or line width.
 
+5/06/25
+move click to hover

@@ -8,7 +8,7 @@ let pmLayer;
 let benzeneLayer; 
 let fullData;      // for storing full GeoJSON for filtering
 
-const map1 = L.map('map1',{fullscreenControl: true}).setView([40.7128, -74.0060], 12);
+const map1 = L.map('map1',{fullscreenControl: true}).setView([40.74281318841831, -73.92931873140857], 11);
 //var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 //  attribution: '© OpenStreetMap contributors'
 //}).addTo(map1);
@@ -31,7 +31,7 @@ function onEachFeature(feature, layer) {
         <tr><th colspan="2"><b>${props.city_town}</b></th></tr>
         <tr><th>PM 2.5</th><td class="${getLevelColorClass(props.particulate_matter_25)}">${(props.particulate_matter_25 * 100).toFixed(1)}%</td></tr>
         <tr><th>Benzene</th><td class="${getLevelColorClass(props.benzene_concentration)}">${(props.benzene_concentration * 100).toFixed(1)}%</td></tr>
-        <tr><th>Truck Traffic</th><td class="${getLevelColorClass(props.traffic_truck_highways)}">${(props.traffic_truck_highways * 100).toFixed(1)}%</td></tr>
+        <tr><th>Highway Truck Traffic</th><td class="${getLevelColorClass(props.traffic_truck_highways)}">${(props.traffic_truck_highways * 100).toFixed(1)}%</td></tr>
         <tr><th>Vehicle Count</th><td class="${getLevelColorClass(props.traffic_number_vehicles)}">${(props.traffic_number_vehicles * 100).toFixed(1)}%</td></tr>
         <tr><th>Asthma ED Rate</th><td class="${getLevelColorClass(props.asthma_ed_rate)}">${(props.asthma_ed_rate * 100).toFixed(1)}%</td></tr>
         <tr><th>COPD ED Rate</th><td class="${getLevelColorClass(props.copd_ed_rate)}">${(props.copd_ed_rate * 100).toFixed(1)}%</td></tr>
@@ -40,7 +40,7 @@ function onEachFeature(feature, layer) {
     
     layer.on("mouseover", (e) => {
         e.target.setStyle({
-          fillColor: '#ffffff',
+          fillColor: '#005a32',
           color: '#333',
           fillOpacity: 0.2,
           weight: 0.5
@@ -61,9 +61,10 @@ function onEachFeature(feature, layer) {
 function getthwayStyle(feature) {
     const tt = feature.properties.traffic_truck_highways;
     return {
-    fillColor: tt > .75 ? '#005a32' :
-                tt > .5 ? '#238b45' :
-                tt > .25 ? '#66c2a4' :
+    fillColor: tt > .83 ? '#00441b' :
+                tt > .65 ? '#238b45' :
+                tt > .47 ? '#66c2a4' :
+                tt > .27 ? '#ccece6' :
                 '#e5f5f9',
     weight: 0.15,
     color: "#333",
@@ -73,9 +74,10 @@ function getthwayStyle(feature) {
 function getttnv(feature) {
     const pm = feature.properties.particulate_matter_25
     return {
-    fillColor: pm > .75 ? '#005a32' :
-                pm > .5 ? '#238b45' :
-                pm > .25 ? '#66c2a4' :
+    fillColor: pm > .84 ? '#00441b' :
+                pm > 0.67 ? '#238b45' :
+                pm > .5 ? '#66c2a4' :
+                pm > .29 ? '#ccece6' :
                 '#e5f5f9',
     weight: 0.15,
     color: "#333",
@@ -85,9 +87,10 @@ function getttnv(feature) {
 function getBenzStyle(feature) {
     const benz = feature.properties.benzene_concentration;
     return {
-    fillColor: benz > .75 ? "#cb181d" :
-                benz > .5 ? "#fb6a4a" :
-                benz > .25 ? "#fcae91" :
+    fillColor: benz > .86 ? "#99000d" :
+                benz > .73 ? "#cb181d" :
+                benz > .59 ? "#fb6a4a" :
+                benz > .4 ? "#fcae91" :
                 "#fee5d9",
     weight: 0.15,
     color: "#333",
@@ -96,40 +99,45 @@ function getBenzStyle(feature) {
 }
 
 function getPmStyle(feature) {
-    const pm = feature.properties.particulate_matter_25
+    const pm = feature.properties.particulate_matter_25;
     return {
-    fillColor: pm > .75 ? '#d94701' :
-                pm > .5 ? '#fd8d3c' :
-                pm > .25 ? '#fdbe85' :
-                '#feedde',
-    weight: 0.15,
-    color: "#333",
-    fillOpacity: 0.9
-    };
-}
-function getasthma(feature) {
-    const pm = feature.properties.asthma_ed_rate
-    return {
-    fillColor: pm > .75 ? '#238443' :
-                pm > .5 ? '#78c679' :
-                pm > .25 ? '#c2e699' :
-                '#ffffcc',
-    weight: 0.15,
-    color: "#333",
-    fillOpacity: 0.9
+        fillColor: pm > 0.87 ? '#a63603' :         
+                   pm > 0.75 ? '#e6550d' :
+                   pm > 0.62 ? '#fd8d3c' :
+                   pm > 0.48 ? '#fdbe85' :
+                              '#feedde',         
+        weight: 0.15,
+        color: "#333",
+        fillOpacity: 0.9
     };
 }
 
-function getcocpd(feature) {
-    const pm = feature.properties.copd_ed_rate
+function getasthma(feature) {
+    const pm = feature.properties.asthma_ed_rate;
     return {
-    fillColor: pm > .75 ? '#ae017e' :
-                pm > .5 ? '#f768a1' :
-                pm > .25 ? '#fbb4b9' :
-                '#feebe2',
-    weight: 0.15,
-    color: "#333",
-    fillOpacity: 0.9
+        fillColor: pm > 0.84 ? '#006837' :        
+                   pm > 0.66 ? '#31a354' :
+                   pm > 0.45 ? '#78c679' :
+                   pm > 0.23 ? '#c2e699' :
+                              '#ffffcc',       
+        weight: 0.15,
+        color: "#333",
+        fillOpacity: 0.9
+    };
+}
+
+
+function getcocpd(feature) {
+    const pm = feature.properties.copd_ed_rate;
+    return {
+        fillColor: pm > 0.67 ? '#7a0177' :  
+                   pm > 0.48 ? '#c51b8a' :
+                   pm > 0.3 ? '#f768a1' :
+                   pm > 0.14 ? '#fbb4b9' :
+                              '#feebe2',         
+        weight: 0.15,
+        color: "#333",
+        fillOpacity: 0.9
     };
 }
 // Filtering logic
@@ -177,8 +185,10 @@ benzSlider.addEventListener("input", () => {
 
 let dataLayer;
 let currentStyleFn = getPmStyle;
-$.getJSON('data/fdc_2023.geojson', function (data) {
-  fullData = data;
+
+$.getJSON('data/fdc_2023_b_nycmetro_extra.geojson', function (data) {
+    // Load GeoJSON data
+    fullData = data;
 
   dataLayer = L.geoJSON(data, {
     onEachFeature: onEachFeature,
@@ -207,7 +217,7 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
   });
 
 
-    map1.fitBounds(dataLayer.getBounds());
+    //map1.fitBounds(dataLayer.getBounds());
 
     const searchbox = L.control.searchbox({
         position: 'topright',
@@ -260,5 +270,17 @@ $.getJSON('data/fdc_2023.geojson', function (data) {
         }, 600);
       }
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleButton = document.getElementById("toggleSidebar");
+    const sidebar = document.getElementById("sidebar");
+  
+    if (toggleButton && sidebar) {
+      toggleButton.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+      });
+    } else {
+      console.error("Sidebar or toggle button not found in the DOM.");
+    }
+  });
 
 
