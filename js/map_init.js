@@ -171,6 +171,7 @@ function updateMapFilters() {
 
   dataLayer.clearLayers();         
   dataLayer.addData(filteredData);  
+  dataLayer.setStyle(currentStyleFn);
 }
 
 pmSlider.addEventListener("input", () => {
@@ -186,7 +187,7 @@ benzSlider.addEventListener("input", () => {
 let dataLayer;
 let currentStyleFn = getPmStyle;
 
-$.getJSON('data/fdc_2023_b_nycmetro_extra.geojson', function (data) {
+$.getJSON('data/nta_fdc_b.geojson', function (data) {
     // Load GeoJSON data
     fullData = data;
 
@@ -226,8 +227,7 @@ $.getJSON('data/fdc_2023_b_nycmetro_extra.geojson', function (data) {
 
 
     const cities = fullData.features.map(f => f.properties.city_town);
-    const counties = fullData.features.map(f => f.properties.county);
-    const fuse = new Fuse(counties, {
+    const fuse = new Fuse(cities, {
         shouldSort: true,
         threshold: 0.4,
         minMatchCharLength: 2
@@ -250,14 +250,14 @@ $.getJSON('data/fdc_2023_b_nycmetro_extra.geojson', function (data) {
         const value = searchbox.getValue();
         if (value !== "") {
           const match = fullData.features.find(f => 
-            f.properties.county.toLowerCase() === value.toLowerCase()
+            f.properties.city_town.toLowerCase() === value.toLowerCase()
           );
       
           if (match) {
             const layer = L.geoJSON(match);
             map1.fitBounds(layer.getBounds(), {
                 padding: [50, 50],
-                maxZoom: 11
+                maxZoom: 15
               });
           } else {
             alert("No exact match found.");

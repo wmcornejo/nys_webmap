@@ -44,3 +44,8 @@ also reduce the areas where you don't have a data with a more neutral transparen
 
 5/06/25
 move click to hover
+
+5/07
+still hovering problems, after filtering as well. done?
+add neighborhood names to city census tracts
+forget about collapsible sidebar done

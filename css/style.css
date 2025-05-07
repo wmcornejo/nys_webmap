@@ -29,18 +29,7 @@ html, body {
   z-index: 1;
 }
 
-#sidebar.collapsed {
-  width: 20px;
-  padding: 0;
-  overflow: hidden;
-}
 
-#sidebar.collapsed:hover {
-  width: 250px;
-  padding: 2rem 1rem;
-  overflow: auto; /* Restore scrolling */
-  z-index: 10; /* Make sure it's on top */
-}
 
   #maparea {
     flex: 2;
@@ -157,7 +146,7 @@ html, body {
     font-size: 14px;
     padding: 4px 8px;
 
-    width: 160px;
+    width: 100%;
     background-color: white;
   }
   .factor-selector {
@@ -171,6 +160,7 @@ html, body {
     padding: 10px;
     border-radius: 5px;
     width: 100%; 
+    box-sizing: border-box; 
   }
   
   .factor-box {
