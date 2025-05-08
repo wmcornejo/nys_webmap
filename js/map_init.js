@@ -258,13 +258,23 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
           );
       
           if (match) {
-            const layer = L.geoJSON(match);
+            const layer = L.geoJSON(match, {
+                style: {
+                    fillColor: 'yellow', // Highlight color
+                    color: '#333',
+                    weight: 2,
+                    fillOpacity: 0.7
+                }
+            }).addTo(map1);
             map1.fitBounds(layer.getBounds(), {
                 padding: [50, 50],
                 maxZoom: 15,
                 animate: true,
                 duration: 8
               });
+              setTimeout(() => {
+                map1.removeLayer(layer);
+            }, 1000);            
           } else {
             alert("No exact match found.");
           }
