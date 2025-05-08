@@ -29,8 +29,6 @@ html, body {
   z-index: 1;
 }
 
-
-
   #maparea {
     flex: 2;
     height: 100vh;
@@ -59,8 +57,9 @@ html, body {
     margin: 1.5rem 0 1rem 0;
     font-size: 1.5rem;
     font-weight: 600;
-    color: #333;
+    color: #005a87; 
     text-align: center;
+    font-family: 'Arial', sans-serif;
   }
   
 
@@ -73,7 +72,33 @@ html, body {
     line-height: 1.7;
     text-align: center;
   }
+  .intro-card {
+    background: #ffffff; 
+    padding: 2rem; 
+    margin-bottom: 2rem; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    line-height: 1.8; 
+    color: #333;
+    font-family: 'Arial', sans-serif; 
+  }
   
+  .intro-card h1 {
+    font-size: 1.8rem; 
+    font-weight: bold;
+    color: #005a87; 
+    margin-bottom: 1rem;
+    text-align: center; 
+  }
+  
+  .intro-card p {
+    font-size: 1rem; 
+    margin-bottom: 1rem; 
+    text-align: justify; 
+  }
+  
+  .intro-card b {
+    color: #005a87; /* Highlight important text */
+  }
 
   form#cityFiltersForm {
     background: white;
@@ -83,6 +108,7 @@ html, body {
     border-radius: 8px;
     box-shadow: 0 1px 5px rgba(0,0,0,0.1);
     text-align: center;
+    font-family: 'Arial', sans-serif;
   }
   
   form label {
@@ -90,6 +116,7 @@ html, body {
     display: block;
     margin-bottom: 1rem;
     color: #444;
+    font-family: 'Arial', sans-serif;
   }
   
   form input[type="range"] {
@@ -161,6 +188,7 @@ html, body {
     border-radius: 5px;
     width: 100%; 
     box-sizing: border-box; 
+    font-family: 'Arial', sans-serif;
   }
   
   .factor-box {

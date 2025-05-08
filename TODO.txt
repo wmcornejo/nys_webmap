@@ -47,5 +47,5 @@ move click to hover
 
 5/07
 still hovering problems, after filtering as well. done?
-add neighborhood names to city census tracts
+add neighborhood names to city census tracts, some are still new york city. done
 forget about collapsible sidebar done
