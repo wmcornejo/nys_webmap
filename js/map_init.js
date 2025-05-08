@@ -266,11 +266,12 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
                     fillOpacity: 0.7
                 }
             }).addTo(map1);
+            
             map1.fitBounds(layer.getBounds(), {
                 padding: [50, 50],
                 maxZoom: 15,
                 animate: true,
-                duration: 8
+                duration: 1.5
               });
               setTimeout(() => {
                 map1.removeLayer(layer);
