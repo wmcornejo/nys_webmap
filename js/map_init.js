@@ -229,9 +229,11 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
     const cities = fullData.features.map(f => f.properties.city_town);
     const fuse = new Fuse(cities, {
         shouldSort: true,
+        // moderate threshold
         threshold: 0.4,
         minMatchCharLength: 2
       });
+      // suggests user input when user types in searchbox
       searchbox.onInput("keyup", function (e) {
         if (e.keyCode === 13) {
           search();
@@ -245,7 +247,9 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
           }
         }
       });
+      // search user input when magnifying glass is clicked
     searchbox.onButton("click", search);
+    // search function
     function search() {
         const value = searchbox.getValue();
         if (value !== "") {
@@ -257,7 +261,9 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
             const layer = L.geoJSON(match);
             map1.fitBounds(layer.getBounds(), {
                 padding: [50, 50],
-                maxZoom: 15
+                maxZoom: 15,
+                animate: true,
+                duration: 8
               });
           } else {
             alert("No exact match found.");
@@ -270,17 +276,6 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
         }, 600);
       }
 });
-document.addEventListener("DOMContentLoaded", () => {
-    const toggleButton = document.getElementById("toggleSidebar");
-    const sidebar = document.getElementById("sidebar");
-  
-    if (toggleButton && sidebar) {
-      toggleButton.addEventListener("click", () => {
-        sidebar.classList.toggle("collapsed");
-      });
-    } else {
-      console.error("Sidebar or toggle button not found in the DOM.");
-    }
-  });
+
 
 
