@@ -193,7 +193,7 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
 
   dataLayer = L.geoJSON(data, {
     onEachFeature: onEachFeature,
-    style: getPmStyle // default style
+    style: getPmStyle 
   }).addTo(map1);
 
  
@@ -242,6 +242,8 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
           if (value !== "") {
             const results = fuse.search(value);
             searchbox.setItems(results.map(res => res.item).slice(0, 5));
+            
+
           } else {
             searchbox.clearItems();
           }
@@ -260,7 +262,7 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
           if (match) {
             const layer = L.geoJSON(match, {
                 style: {
-                    fillColor: 'yellow', // Highlight color
+                    fillColor: 'yellow', 
                     color: '#333',
                     weight: 2,
                     fillOpacity: 0.7
@@ -286,6 +288,7 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
           searchbox.clear();
         }, 600);
       }
+      
 });
 
 

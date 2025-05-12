@@ -97,7 +97,7 @@ html, body {
   }
   
   .intro-card b {
-    color: #005a87; /* Highlight important text */
+    color: #005a87;
   }
 
   form#cityFiltersForm {

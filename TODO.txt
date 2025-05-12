@@ -49,3 +49,7 @@ move click to hover
 still hovering problems, after filtering as well. done?
 add neighborhood names to city census tracts, some are still new york city. done
 forget about collapsible sidebar done
+
+5/08
+add code to select on dropdown in search
+add link to github repo
