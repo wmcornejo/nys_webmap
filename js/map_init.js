@@ -229,7 +229,7 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
     const cities = fullData.features.map(f => f.properties.city_town);
     const fuse = new Fuse(cities, {
         shouldSort: true,
-        // moderate threshold
+        // moderate threshold for autocomplete
         threshold: 0.4,
         minMatchCharLength: 2
       });
