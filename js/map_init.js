@@ -72,7 +72,7 @@ function getthwayStyle(feature) {
     };
 }
 function getttnv(feature) {
-    const pm = feature.properties.particulate_matter_25
+    const pm = feature.properties.traffic_number_vehicles
     return {
     fillColor: pm > .84 ? '#00441b' :
                 pm > 0.67 ? '#238b45' :
@@ -200,8 +200,8 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
   const styleMap = {
     pm: getPmStyle,
     benz: getBenzStyle,
-    ttraf: getthwayStyle,
-    tthwy: getttnv,
+    ttraf: getttnv,
+    tthwy: getthwayStyle,
     asthma: getasthma,
     cocpd: getcocpd,
   };
