@@ -84,6 +84,7 @@ function getttnv(feature) {
     fillOpacity: 0.9
     };
 }
+
 function getBenzStyle(feature) {
     const benz = feature.properties.benzene_concentration;
     return {
@@ -196,7 +197,8 @@ $.getJSON('data/nta_fdc_b.geojson', function (data) {
     style: getPmStyle 
   }).addTo(map1);
 
- 
+
+
   const styleMap = {
     pm: getPmStyle,
     benz: getBenzStyle,
