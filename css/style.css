@@ -154,21 +154,38 @@ html, body {
     background-color: #f1f1f1;
   }
   .popup-green {
-    color: limegreen;
-  }
-  
-  .popup-lightgreen {
-    color: #91cf60;
-  }
-  
-  .popup-yellow {
-    color: #fec44f;
-  }
-  
-  .popup-red {
-    color: #de2d26;
+    color: #228B22;
+    background: #eafbe7;
+    border-radius: 3px;
+    padding: 2px 6px;
   }
 
+  .popup-lightgreen {
+    color: #91cf60;
+    background: #f5fae6;
+    border-radius: 3px;
+    padding: 2px 6px;
+  }
+
+  .popup-yellow {
+    color: #b8860b;
+    background: #fffbe6;
+    border-radius: 3px;
+    padding: 2px 6px;
+  }
+
+  .popup-red {
+    color: #de2d26;
+    background: #fdeaea;
+    border-radius: 3px;
+    padding: 2px 6px;
+  }
+  .popup-green,
+  .popup-lightgreen,
+  .popup-yellow,
+  .popup-red {
+    font-weight: bold;
+  }
   #layerStyleSelect {
     font-size: 14px;
     padding: 4px 8px;
