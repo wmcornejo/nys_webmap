@@ -53,3 +53,9 @@ forget about collapsible sidebar done
 5/08
 add code to select on dropdown in search
 add link to github repo
+
+7/22
+Thinking of new things, maybe have one filter for the layer being displayed.
+(But that can be seen with the coloring. someting more interactive. Like something
+that would take advanced leaflet and js use to the next level.)
+Or highlight census tracts and have a smooth gradient yellow highlight.
